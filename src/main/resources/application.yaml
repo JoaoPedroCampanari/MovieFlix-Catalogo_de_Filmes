@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: movieflix
+  datasource:
+    url: jdbc:postgresql://localhost:5432/movieflix
+    username: postgres
+    password: postgres
+
+  jpa:
+    show-sql: true
+
+  flyway:
+    enabled: true
+
