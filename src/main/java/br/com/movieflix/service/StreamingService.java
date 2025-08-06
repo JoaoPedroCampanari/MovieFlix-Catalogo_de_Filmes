@@ -1,8 +1,6 @@
 package br.com.movieflix.service;
 
-import br.com.movieflix.controller.request.StreamingRequest;
 import br.com.movieflix.entity.Streaming;
-import br.com.movieflix.mapper.StreamingMapper;
 import br.com.movieflix.repository.StreamingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,12 +17,12 @@ public class StreamingService {
     private final StreamingRepository streamingRepository;
 
     @Transactional(readOnly = true)
-    public List<Streaming> getAllStreaming() {
+    public List<Streaming> findAllStreaming() {
         return streamingRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public Optional<Streaming> getById(UUID id){
+    public Optional<Streaming> findById(UUID id){
         return streamingRepository.findById(id);
     }
 

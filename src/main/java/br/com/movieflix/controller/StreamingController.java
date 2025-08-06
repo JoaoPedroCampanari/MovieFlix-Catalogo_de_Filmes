@@ -1,7 +1,6 @@
 package br.com.movieflix.controller;
 
 import br.com.movieflix.controller.request.StreamingRequest;
-import br.com.movieflix.controller.response.CategoryResponse;
 import br.com.movieflix.controller.response.StreamingResponse;
 import br.com.movieflix.entity.Streaming;
 import br.com.movieflix.mapper.StreamingMapper;
@@ -25,7 +24,7 @@ public class StreamingController {
     public ResponseEntity<List<StreamingResponse>> getAllStreaming(){
 
         List<StreamingResponse> responses = streamingService
-                .getAllStreaming()
+                .findAllStreaming()
                 .stream()
                 .map(StreamingMapper::toStreamingResponse)
                 .toList();
@@ -35,7 +34,7 @@ public class StreamingController {
 
     @GetMapping("/{id}")
     public ResponseEntity<StreamingResponse> getById(@PathVariable(value = "id")UUID id){
-        return streamingService.getById(id)
+        return streamingService.findById(id)
                 .map(streaming -> ResponseEntity.ok().body(StreamingMapper.toStreamingResponse(streaming)))
                 .orElse(ResponseEntity.notFound().build());
     }
