@@ -1,6 +1,5 @@
 package br.com.movieflix.service;
 
-import br.com.movieflix.controller.response.MovieResponse;
 import br.com.movieflix.entity.Category;
 import br.com.movieflix.entity.Movie;
 import br.com.movieflix.entity.Streaming;
@@ -89,6 +88,7 @@ public class MovieService {
         return Optional.empty();
     }
 
+    @Transactional(readOnly = true)
     public List<Movie> findByCategory(UUID categoryId){
         return movieRepository.findMovieByCategories(List.of(Category.builder().id(categoryId).build()));
     }

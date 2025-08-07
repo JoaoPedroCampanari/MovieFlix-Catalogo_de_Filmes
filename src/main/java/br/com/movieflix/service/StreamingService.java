@@ -31,6 +31,7 @@ public class StreamingService {
         return streamingRepository.save(streaming);
     }
 
+    @Transactional
     public void deleteById(UUID id) {
         streamingRepository.deleteById(id);
     }
