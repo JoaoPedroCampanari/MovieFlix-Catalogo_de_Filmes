@@ -2,7 +2,7 @@ spring:
   application:
     name: movieflix
   datasource:
-    url: jdbc:postgresql://localhost:5433/movieflix #está com 5433 devido a um conflito com o postgres instalado na maquina.
+    url: jdbc:postgresql://localhost:5433/movieflix #estï¿½ com 5433 devido a um conflito com o postgres instalado na maquina.
     username: postgres
     password: postgres
 
@@ -12,3 +12,7 @@ spring:
   flyway:
     enabled: true
 
+
+movieflix:
+  security:
+    secret: "senhaMisteriosa"
