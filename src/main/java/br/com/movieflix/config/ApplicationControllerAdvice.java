@@ -25,7 +25,7 @@ public class ApplicationControllerAdvice{
     public Map<String, String> handleArgumentNotValidException(MethodArgumentNotValidException exception){
         Map<String, String> errosDto = new HashMap<>();
 
-        exception.getBindingResult().getAllErrors().forEach((errors) -> {
+        exception.getBindingResult().getAllErrors().forEach(errors -> {
             errosDto.put(((FieldError)errors).getField(), errors.getDefaultMessage());
         });
 
