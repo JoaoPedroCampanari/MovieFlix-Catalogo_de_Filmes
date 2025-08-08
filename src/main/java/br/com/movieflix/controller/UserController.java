@@ -9,6 +9,7 @@ import br.com.movieflix.entity.User;
 import br.com.movieflix.exception.UsernameOrPasswordInvalidException;
 import br.com.movieflix.mapper.UserMapper;
 import br.com.movieflix.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -52,7 +53,7 @@ public class UserController {
             throw new UsernameOrPasswordInvalidException("Usuario ou senha inválidos. ");
         }
     }
-
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAll(){
         List<UserResponse> userResponses = userService.findAll()
@@ -61,14 +62,14 @@ public class UserController {
                 .toList();
         return ResponseEntity.ok(userResponses);
     }
-
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findById(@PathVariable(name = "id") UUID id){
         return userService.findById(id)
                 .map(user -> ResponseEntity.ok(UserMapper.toUserResponse(user)))
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable(name = "id") UUID id){
         userService.deleteById(id);

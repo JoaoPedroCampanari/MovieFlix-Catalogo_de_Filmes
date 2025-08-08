@@ -5,6 +5,7 @@ import br.com.movieflix.controller.response.MovieResponse;
 import br.com.movieflix.entity.Movie;
 import br.com.movieflix.mapper.MovieMapper;
 import br.com.movieflix.service.MovieService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/movieflix/movie")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class MovieController {
 
     private final MovieService movieService;

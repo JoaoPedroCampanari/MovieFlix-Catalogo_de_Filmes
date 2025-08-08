@@ -24,8 +24,9 @@ public class ApplicationControllerAdvice{
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleArgumentNotValidException(MethodArgumentNotValidException exception){
-        return exception.getBindingResult().getFieldErrors()
-                .stream()
-                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (mensagenAntiga, mensagemnova) -> mensagemnova + " " + mensagenAntiga));
+         return exception.getBindingResult()
+                 .getFieldErrors()
+                 .stream()
+                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (mensagemAntiga, mensagemNova) -> mensagemAntiga + " " + mensagemNova));
     }
 }

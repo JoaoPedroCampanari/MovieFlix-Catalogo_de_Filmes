@@ -5,6 +5,7 @@ import br.com.movieflix.controller.response.StreamingResponse;
 import br.com.movieflix.entity.Streaming;
 import br.com.movieflix.mapper.StreamingMapper;
 import br.com.movieflix.service.StreamingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/movieflix/streaming")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class StreamingController {
 
     private final StreamingService streamingService;

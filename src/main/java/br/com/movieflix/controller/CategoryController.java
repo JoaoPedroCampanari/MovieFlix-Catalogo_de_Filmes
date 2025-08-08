@@ -5,6 +5,7 @@ import br.com.movieflix.controller.response.CategoryResponse;
 import br.com.movieflix.entity.Category;
 import br.com.movieflix.mapper.CategoryMapper;
 import br.com.movieflix.service.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/movieflix/category")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
 
     private final CategoryService categoryService;
