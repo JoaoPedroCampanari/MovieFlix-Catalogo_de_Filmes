@@ -6,6 +6,7 @@ import br.com.movieflix.controller.request.UserRequest;
 import br.com.movieflix.controller.response.LoginResponse;
 import br.com.movieflix.controller.response.UserResponse;
 import br.com.movieflix.entity.User;
+import br.com.movieflix.exception.UsernameOrPasswordInvalidException;
 import br.com.movieflix.mapper.UserMapper;
 import br.com.movieflix.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -37,13 +39,17 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
-        UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password());
-        Authentication authentication = authenticationManager.authenticate(userAndPass);
+        try {
+            UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password());
+            Authentication authentication = authenticationManager.authenticate(userAndPass);
 
-        User user = (User) authentication.getPrincipal();
-        String token = tokenComponent.generateToken(user);
+            User user = (User) authentication.getPrincipal();
+            String token = tokenComponent.generateToken(user);
 
-        return ResponseEntity.ok(new LoginResponse(user.getEmail(), token));
+            return ResponseEntity.ok(new LoginResponse(user.getEmail(), token));
+        }catch (BadCredentialsException e){
+            throw new UsernameOrPasswordInvalidException("Usuario ou senha inválidos. ");
+        }
     }
 
     @GetMapping
