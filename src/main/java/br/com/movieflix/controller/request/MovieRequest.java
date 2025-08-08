@@ -1,6 +1,7 @@
 package br.com.movieflix.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 @Builder
 public record MovieRequest(
-                           @NotEmpty(message = "Titulo do filme é obrigatório. ")
+                           @NotBlank(message = "Titulo do filme é obrigatório. ")
                            String title,
                            String description,
                            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
