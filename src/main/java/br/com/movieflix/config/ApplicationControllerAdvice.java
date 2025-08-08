@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ApplicationControllerAdvice{
@@ -23,12 +24,8 @@ public class ApplicationControllerAdvice{
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleArgumentNotValidException(MethodArgumentNotValidException exception){
-        Map<String, String> errosDto = new HashMap<>();
-
-        exception.getBindingResult().getAllErrors().forEach(errors -> {
-            errosDto.put(((FieldError)errors).getField(), errors.getDefaultMessage());
-        });
-
-        return errosDto;
+        return exception.getBindingResult().getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (mensagenAntiga, mensagemnova) -> mensagemnova + " " + mensagenAntiga));
     }
 }
