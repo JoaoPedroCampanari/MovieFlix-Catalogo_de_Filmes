@@ -69,15 +69,26 @@ public class MovieService {
             List<Streaming> streamings = this.findStreamings(updateMovie.getStreamings());
 
             Movie movie = optMovie.get();
-            movie.setTitle(updateMovie.getTitle());
-            movie.setDescription(updateMovie.getDescription());
-            movie.setRating(updateMovie.getRating());
-            movie.setReleaseDate(updateMovie.getReleaseDate());
-            movie.getCategories().clear();
-            movie.getCategories().addAll(categories);
-            movie.getStreamings().clear();
-            movie.getStreamings().addAll(streamings);
-
+            if (updateMovie.getTitle() != null){
+                movie.setTitle(updateMovie.getTitle());
+            }
+            if (updateMovie.getDescription() != null){
+                movie.setDescription(updateMovie.getDescription());
+            }
+            if (updateMovie.getRating() != null){
+                movie.setRating(updateMovie.getRating());
+            }
+            if (updateMovie.getReleaseDate() != null){
+                movie.setReleaseDate(updateMovie.getReleaseDate());
+            }
+            if (!categories.isEmpty()){
+                movie.getCategories().clear();
+                movie.getCategories().addAll(categories);
+            }
+            if (!streamings.isEmpty()){
+                movie.getStreamings().clear();
+                movie.getStreamings().addAll(streamings);
+            }
             movieRepository.save(movie);
             return MovieMapper.toMovieResponse(movie);
         }

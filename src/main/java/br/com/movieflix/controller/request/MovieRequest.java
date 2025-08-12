@@ -16,7 +16,7 @@ public record MovieRequest(
                            String description,
                            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
                            LocalDate releaseDate,
-                           double rating,
+                           Double rating,
                            List<UUID> catogories,
                            List<UUID> streamings
 ) {
