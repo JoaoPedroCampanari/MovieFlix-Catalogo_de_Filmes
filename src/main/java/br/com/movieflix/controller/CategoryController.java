@@ -6,6 +6,7 @@ import br.com.movieflix.entity.Category;
 import br.com.movieflix.mapper.CategoryMapper;
 import br.com.movieflix.service.CategoryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,30 +26,27 @@ public class CategoryController {
 
     @GetMapping()
     public ResponseEntity<List<CategoryResponse>> getallCategories() {
-        List<CategoryResponse> categoryResponses = categoryService
-                .getallCategories()
-                .stream()
-                .map(CategoryMapper::toCategoryResponde)
-                .toList();
-        return ResponseEntity.ok().body(categoryResponses);
+        return ResponseEntity.ok().body(categoryService.getallCategories());
     }
 
     @GetMapping("{id}")
     public ResponseEntity<CategoryResponse> findbyID(@PathVariable(value = "id") UUID id) {
-        return categoryService.findbyId(id)
-                .map(category -> ResponseEntity.ok(CategoryMapper.toCategoryResponde(category)))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok().body(categoryService.findbyId(id));
     }
 
     @PostMapping
     public ResponseEntity<CategoryResponse> saveCategory(@Valid @RequestBody CategoryRequest request) {
-        Category category = categoryService.saveCategory(CategoryMapper.toCategory(request));
-        return ResponseEntity.status(HttpStatus.CREATED).body(CategoryMapper.toCategoryResponde(category));
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.saveCategory(request));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deletebyId(@PathVariable(value = "id") UUID id) {
         categoryService.deletebyId(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable(name = "id") UUID id, @RequestBody CategoryRequest categoryRequest){
+        return ResponseEntity.ok().body(categoryService.updateCategory(id, categoryRequest));
     }
 }

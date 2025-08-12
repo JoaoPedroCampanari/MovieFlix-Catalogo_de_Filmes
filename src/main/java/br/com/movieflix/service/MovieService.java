@@ -36,7 +36,7 @@ public class MovieService {
     @Transactional(readOnly = true)
     public List<Category> findCategories(List<Category> categories){
         return categories.stream()
-                .map(category -> categoryService.findbyId(category.getId()))
+                .map(category -> categoryService.findByIdByListFromMovie(category.getId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
