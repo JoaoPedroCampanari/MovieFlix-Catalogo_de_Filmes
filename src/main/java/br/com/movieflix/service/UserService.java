@@ -1,7 +1,9 @@
 package br.com.movieflix.service;
 
+import br.com.movieflix.controller.request.UserRequest;
 import br.com.movieflix.controller.response.UserResponse;
 import br.com.movieflix.entity.User;
+import br.com.movieflix.mapper.UserMapper;
 import br.com.movieflix.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,20 +23,27 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User salvar(User user) {
-        String password = user.getPassword();
+    public UserResponse salvar(UserRequest userRequest) {
+        String password = userRequest.password();
+        User user = UserMapper.toUser(userRequest);
+
         user.setPassword(passwordEncoder.encode(password));
-        return userRepository.save(user);
+        return UserMapper.toUserResponse(userRepository.save(user));
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserResponse> findAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toUserResponse)
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> findById(UUID id){
-        return userRepository.findById(id);
+    public UserResponse findById(UUID id){
+        return userRepository.findById(id)
+                .map(UserMapper::toUserResponse)
+                .orElse(null);
     }
 
     @Transactional

@@ -33,12 +33,6 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final TokenComponent tokenComponent;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> salvar(@Valid @RequestBody UserRequest userRequest){
-        User salvado = userService.salvar(UserMapper.toUser(userRequest));
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toUserResponse(salvado));
-    }
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest){
         try {
@@ -53,21 +47,22 @@ public class UserController {
             throw new UsernameOrPasswordInvalidException("Usuario ou senha inválidos. ");
         }
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserResponse> salvar(@Valid @RequestBody UserRequest userRequest){
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.salvar(userRequest));
+    }
+
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAll(){
-        List<UserResponse> userResponses = userService.findAll()
-                .stream()
-                .map(UserMapper::toUserResponse)
-                .toList();
-        return ResponseEntity.ok(userResponses);
+        return ResponseEntity.ok().body(userService.findAll());
     }
+
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findById(@PathVariable(name = "id") UUID id){
-        return userService.findById(id)
-                .map(user -> ResponseEntity.ok(UserMapper.toUserResponse(user)))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok().body(userService.findById(id));
     }
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/delete/{id}")
