@@ -1,8 +1,11 @@
 package br.com.movieflix.service;
 
+import br.com.movieflix.controller.request.MovieRequest;
+import br.com.movieflix.controller.response.MovieResponse;
 import br.com.movieflix.entity.Category;
 import br.com.movieflix.entity.Movie;
 import br.com.movieflix.entity.Streaming;
+import br.com.movieflix.mapper.MovieMapper;
 import br.com.movieflix.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +32,57 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    public List<Movie> findAllMovies() {
-        return movieRepository.findAll();
+    public List<MovieResponse> findAllMovies() {
+        return movieRepository.findAll()
+                .stream()
+                .map(MovieMapper::toMovieResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public MovieResponse findById(UUID id) {
+        return movieRepository.findById(id)
+                .map(MovieMapper::toMovieResponse)
+                .orElse(null);
+    }
+
+    @Transactional
+    public void deleteById(UUID id) {
+        movieRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MovieResponse> findByCategory(UUID categoryId){
+        return movieRepository.findMovieByCategories(List.of(Category.builder().id(categoryId).build()))
+                .stream()
+                .map(MovieMapper::toMovieResponse)
+                .toList();
+    }
+
+    @Transactional
+    public MovieResponse update(UUID id, MovieRequest movieRequest){
+        Optional<Movie> optMovie = movieRepository.findById(id);
+        Movie updateMovie = MovieMapper.toMovie(movieRequest);
+
+        if (optMovie.isPresent()){
+            List<Category> categories = this.findCategories(updateMovie.getCategories());
+            List<Streaming> streamings = this.findStreamings(updateMovie.getStreamings());
+
+            Movie movie = optMovie.get();
+            movie.setTitle(updateMovie.getTitle());
+            movie.setDescription(updateMovie.getDescription());
+            movie.setRating(updateMovie.getRating());
+            movie.setReleaseDate(updateMovie.getReleaseDate());
+            movie.getCategories().clear();
+            movie.getCategories().addAll(categories);
+            movie.getStreamings().clear();
+            movie.getStreamings().addAll(streamings);
+
+            movieRepository.save(movie);
+            return MovieMapper.toMovieResponse(movie);
+        }
+
+        return null;
     }
 
     @Transactional(readOnly = true)
@@ -49,47 +101,5 @@ public class MovieService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Movie> findById(UUID id) {
-        return movieRepository.findById(id);
-    }
-
-    @Transactional
-    public void deleteById(UUID id) {
-        movieRepository.deleteById(id);
-    }
-
-    @Transactional
-    public Optional<Movie> update(UUID id, Movie updateMovie){
-        Optional<Movie> optMovie = movieRepository.findById(id);
-
-        if (optMovie.isPresent()){
-
-            List<Category> categories = this.findCategories(updateMovie.getCategories());
-            List<Streaming> streamings = this.findStreamings(updateMovie.getStreamings());
-
-            Movie movie = optMovie.get();
-            movie.setTitle(updateMovie.getTitle());
-            movie.setDescription(updateMovie.getDescription());
-            movie.setRating(updateMovie.getRating());
-            movie.setReleaseDate(updateMovie.getReleaseDate());
-            movie.getCategories().clear();
-            movie.getCategories().addAll(categories);
-            movie.getStreamings().clear();
-            movie.getStreamings().addAll(streamings);
-
-            movieRepository.save(movie);
-
-            return Optional.of(movie);
-        }
-
-        return Optional.empty();
-    }
-
-    @Transactional(readOnly = true)
-    public List<Movie> findByCategory(UUID categoryId){
-        return movieRepository.findMovieByCategories(List.of(Category.builder().id(categoryId).build()));
     }
 }

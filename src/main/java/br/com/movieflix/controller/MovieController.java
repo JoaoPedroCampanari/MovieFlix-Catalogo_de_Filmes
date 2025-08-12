@@ -26,12 +26,7 @@ public class MovieController {
 
     @GetMapping
     public ResponseEntity<List<MovieResponse>> getAllMovies(){
-        List<MovieResponse> movieResponses = movieService
-                .findAllMovies()
-                .stream()
-                .map(MovieMapper::toMovieResponse)
-                .toList();
-        return ResponseEntity.ok(movieResponses);
+        return ResponseEntity.ok(movieService.findAllMovies());
     }
 
     @PostMapping
@@ -42,31 +37,23 @@ public class MovieController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MovieResponse> findById(@PathVariable(name = "id") UUID id){
-        return movieService.findById(id)
-                .map(movie -> ResponseEntity.ok(MovieMapper.toMovieResponse(movie)))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok().body(movieService.findById(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable(name = "id") UUID id){
         movieService.deleteById(id);
-
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MovieResponse> update(@PathVariable(name = "id") UUID id, @Valid @RequestBody MovieRequest request){
-        return movieService.update(id, MovieMapper.toMovie(request))
-                .map(movie -> ResponseEntity.ok(MovieMapper.toMovieResponse(movie)))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok().body(movieService.update(id, request));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<MovieResponse>> moviesByCategory(@RequestParam(name = "category") UUID category){
-        return ResponseEntity.ok(movieService.findByCategory(category)
-                .stream()
-                .map(MovieMapper::toMovieResponse)
-                .toList());
+        return ResponseEntity.ok().body(movieService.findByCategory(category));
     }
 
 }
