@@ -25,32 +25,27 @@ public class StreamingController {
 
     @GetMapping
     public ResponseEntity<List<StreamingResponse>> getAllStreaming(){
-
-        List<StreamingResponse> responses = streamingService
-                .findAllStreaming()
-                .stream()
-                .map(StreamingMapper::toStreamingResponse)
-                .toList();
-
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.ok(streamingService.findAllStreaming());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<StreamingResponse> getById(@PathVariable(value = "id")UUID id){
-        return streamingService.findById(id)
-                .map(streaming -> ResponseEntity.ok().body(StreamingMapper.toStreamingResponse(streaming)))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok().body(streamingService.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<StreamingResponse> saveStreaming(@Valid @RequestBody StreamingRequest streamingRequest){
-        Streaming streaming = streamingService.saveStreaming(StreamingMapper.toStreaming(streamingRequest));
-        return ResponseEntity.status(HttpStatus.CREATED).body(StreamingMapper.toStreamingResponse(streaming));
+        return ResponseEntity.status(HttpStatus.CREATED).body(streamingService.saveStreaming(streamingRequest));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable(value = "id") UUID id){
         streamingService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StreamingResponse> updateStreaming(@PathVariable(name = "id") UUID id, @RequestBody StreamingRequest streamingRequest){
+        return ResponseEntity.ok().body(streamingService.updateStreaming(id, streamingRequest));
     }
 }

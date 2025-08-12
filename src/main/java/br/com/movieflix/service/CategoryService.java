@@ -28,7 +28,8 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> getallCategories() {
-        return categoryRepository.findAll().stream()
+        return categoryRepository.findAll()
+                .stream()
                 .map(CategoryMapper::toCategoryResponde)
                 .toList();
     }
@@ -47,16 +48,12 @@ public class CategoryService {
     @Transactional
     public CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest){
         Optional<Category> category = categoryRepository.findById(id);
-
         if (category.isPresent()){
-
             if (categoryRequest.name() != null){
                 category.get().setName(categoryRequest.name());
             }
-
             return CategoryMapper.toCategoryResponde(categoryRepository.save(category.get()));
         }
-
         return null;
     }
 
