@@ -31,8 +31,7 @@ public class MovieController {
 
     @PostMapping
     public ResponseEntity<MovieResponse> save(@Valid @RequestBody MovieRequest movieRequest){
-        Movie movieSalvo = movieService.save(MovieMapper.toMovie(movieRequest));
-        return ResponseEntity.ok(MovieMapper.toMovieResponse(movieSalvo));
+        return ResponseEntity.ok(movieService.save(movieRequest));
     }
 
     @GetMapping("/{id}")

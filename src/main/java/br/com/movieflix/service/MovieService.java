@@ -24,11 +24,20 @@ public class MovieService {
     private final StreamingService streamingService;
 
     @Transactional
-    public Movie save(Movie movie){
-        movie.setCategories(this.findCategories(movie.getCategories()));
-        movie.setStreamings(this.findStreamings(movie.getStreamings()));
+    public MovieResponse save(MovieRequest movieRequest){
+        Movie movie = MovieMapper.toMovie(movieRequest);
 
-        return movieRepository.save(movie);
+        List<Category> categories = movieRequest.catogories()
+                .stream()
+                .map(uuid -> Category.builder().id(uuid).build()).toList();
+        List<Streaming> streamings = movieRequest.streamings()
+                .stream()
+                .map(uuid -> Streaming.builder().id(uuid).build()).toList();
+
+        movie.setCategories(this.findCategories(categories));
+        movie.setStreamings(this.findStreamings(streamings));
+        Movie save = movieRepository.save(movie);
+        return MovieMapper.toMovieResponse(save);
     }
 
     @Transactional(readOnly = true)
