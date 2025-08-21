@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface StreamingRepository extends JpaRepository<Streaming, UUID> {
+    boolean existsStreamingByNameIgnoreCase(String name);
 }

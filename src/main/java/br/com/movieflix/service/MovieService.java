@@ -116,8 +116,6 @@ public class MovieService {
     public List<Streaming> findStreamings(List<Streaming> streamings){
         return streamings.stream()
                 .map(streaming -> streamingService.findByIdFromMovieList(streaming.getId()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .toList();
     }
 }
