@@ -1,6 +1,7 @@
 package br.com.movieflix.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,9 +15,13 @@ import java.util.stream.Collectors;
 public class ApplicationControllerAdvice{
 
     @ExceptionHandler(UsernameOrPasswordInvalidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleUsernameOrPasswordInvalidException(UsernameOrPasswordInvalidException exception){
-        return exception.getMessage();
+    public ResponseEntity<String> handleUsernameOrPasswordInvalidException(UsernameOrPasswordInvalidException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(GlobalExceptionAbstract.class)
+    public ResponseEntity<String> handleGlobalExceptionAbstract (GlobalExceptionAbstract exceptionAbstract){
+        return ResponseEntity.status(exceptionAbstract.getStatus()).body(exceptionAbstract.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -3,6 +3,8 @@ package br.com.movieflix.service;
 import br.com.movieflix.controller.request.CategoryRequest;
 import br.com.movieflix.controller.response.CategoryResponse;
 import br.com.movieflix.entity.Category;
+import br.com.movieflix.exception.categoryException.CategoryAlreadyExistException;
+import br.com.movieflix.exception.categoryException.CategoryNotFoundException;
 import br.com.movieflix.mapper.CategoryMapper;
 import br.com.movieflix.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,7 +24,7 @@ public class CategoryService {
     public CategoryResponse findbyId(UUID id) {
         return categoryRepository.findById(id)
                 .map(CategoryMapper::toCategoryResponde)
-                .orElse(null);
+                .orElseThrow(CategoryNotFoundException::new);
     }
 
     @Transactional(readOnly = true)
@@ -36,29 +37,34 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse saveCategory(CategoryRequest categoryRequest) {
+        if (categoryRepository.existsCategoriesByNameIgnoreCase(categoryRequest.name())){
+            throw new CategoryAlreadyExistException();
+        }
         Category category = categoryRepository.save(CategoryMapper.toCategory(categoryRequest));
         return CategoryMapper.toCategoryResponde(category);
     }
 
     @Transactional(readOnly = true)
-    public Optional<Category> findByIdByListFromMovie(UUID id){
-        return categoryRepository.findById(id);
+    public Category findByIdByListFromMovie(UUID id){
+        return categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
     }
 
     @Transactional
     public CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest){
-        Optional<Category> category = categoryRepository.findById(id);
-        if (category.isPresent()){
-            if (categoryRequest.name() != null){
-                category.get().setName(categoryRequest.name());
-            }
-            return CategoryMapper.toCategoryResponde(categoryRepository.save(category.get()));
+        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
+        if (categoryRepository.existsCategoriesByNameIgnoreCase(categoryRequest.name())){
+            throw new CategoryAlreadyExistException();
         }
-        return null;
+        category.setName(categoryRequest.name());
+        return CategoryMapper.toCategoryResponde(categoryRepository.save(category));
+
     }
 
     @Transactional
     public void deletebyId(UUID id) {
+        if (!categoryRepository.existsById(id)){
+            throw new CategoryNotFoundException();
+        }
         categoryRepository.deleteById(id);
     }
 }

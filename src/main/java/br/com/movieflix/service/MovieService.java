@@ -109,8 +109,6 @@ public class MovieService {
     public List<Category> findCategories(List<Category> categories){
         return categories.stream()
                 .map(category -> categoryService.findByIdByListFromMovie(category.getId()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .toList();
     }
 
